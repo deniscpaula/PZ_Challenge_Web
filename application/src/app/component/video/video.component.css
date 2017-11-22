@@ -1,0 +1,59 @@
+.btn-back, .btn-next {
+    box-sizing: border-box;
+    color: rgba(255,255,255,.6);
+    cursor: pointer;
+    margin: 20px;
+    position: absolute;
+    top: calc(50% - 60px);
+    transition: ease-in-out .1s;
+    width: 50px;
+    z-index: 1;
+}
+
+.btn-next {
+    right: 0;
+}
+
+.btn-back:hover {
+    color: white;
+    transform: translateX(-3px);
+}
+
+.btn-next:hover {
+    color: white;
+    transform: translateX(3px);
+}
+
+.btn-back-to-list {
+    background: white;
+    border: 1px solid #ededed;
+    border-radius: 7px;
+    color: #555;
+    font-size: 0.9rem;
+    padding: 15px;
+}
+
+.btn-back-to-list > i {
+    margin-right: 5px;
+}
+
+.display {
+    border-radius: 7px;
+    box-shadow: rgba(0,0,0,.1) 1px 1px 35px 2px;
+    margin: 50px auto 20px;
+    position: relative;
+}
+
+.video {
+    border-radius: 7px;
+}
+
+.legenda {
+    bottom: 20px;
+    color: white;
+    font-size: 1.3rem;
+    position: absolute;
+    text-align: center;
+    text-shadow: 2px 0 0 #000, -2px 0 0 #000, 0 2px 0 #000, 0 -2px 0 #000, 1px 1px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;;
+    width: 100%;
+}
