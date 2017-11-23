@@ -9,7 +9,7 @@ export class VideoService {
   constructor(private service: WebserviceService) { }
 
   list(): Observable<Video[]> {
-    return this.service.get('assets.json').map(res => res.json());
+    return this.service.get().map(res => res.json());
   }
 
 }

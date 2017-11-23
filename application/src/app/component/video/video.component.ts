@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, ViewChild, ElementRef, Renderer } from '@angular/core';
 import { Video } from '../../model/video';
 import { WebserviceService } from '../../service/webservice.service';
+import { VideoService } from '../../service/video.service';
 
 @Component({
   selector: 'app-video',
@@ -16,21 +17,34 @@ export class VideoComponent implements OnInit {
   ctx: CanvasRenderingContext2D;
   legenda = "";
 
-  video: Video;
+  previousVideo: Video;
+  actualVideo: Video;
+  nextVideo: Video;
   videos: Video[];
   data: any;
+  videoIndex: any;
   showPrevious: boolean;
   showNext: boolean;
+  loading = true;
 
-  constructor(private renderer: Renderer, private service: WebserviceService) { }
+  constructor(private renderer: Renderer,
+    private service: WebserviceService,
+    private videoService: VideoService
+  ) { }
 
   ngOnInit() {
-    this.data = JSON.parse(sessionStorage.getItem('data'));
-    this.videos = this.data['videos'];
-    this.showPreviousNext();
+    this.videoIndex = JSON.parse(sessionStorage.getItem('data')).index;
 
-    this.start();
-    this.load();
+    this.videoService.list()
+      .subscribe(res => {
+        this.data = res;
+        this.videos = this.data.objects;
+
+        this.showPreviousNext();
+        this.start();
+        this.load();
+
+      }, error => console.log(error));
   }
 
   load() {
@@ -39,29 +53,37 @@ export class VideoComponent implements OnInit {
   }
 
   /**
-   * Inicia vídeo e áudio após ambos estarem carregados
+   * Inicia vídeo e áudio após ambos estar carregados
    */
   start() {
     let audio = this.audioRef.nativeElement;
     let video = this.videoRef.nativeElement;
-    this.video = this.videos[this.data['index']];
+    this.actualVideo = this.videos[this.videoIndex];
 
     this.showVideo();
     this.audioSettings();
 
     this.renderer.listen(audio, 'loadeddata', event => {
-      if (audio.readyState >= 3 && video.readyState >= 3) {
-        audio.play();
-      }
+      this.play();
     });
 
     this.renderer.listen(video, 'loadeddata', event => {
-      if (audio.readyState >= 3 && video.readyState >= 3) {
-        audio.play();
-      }
+      this.play();
     });
   }
 
+  play() {
+    let audio = this.audioRef.nativeElement;
+    let video = this.videoRef.nativeElement;
+
+    if (audio.readyState >= 3 && video.readyState >= 3) {
+      audio.play();
+      this.loading = false;
+
+    } else {
+      this.loading = true;
+    }
+  }
 
   /**
    * Configurações ao inicia, pausar e alterar o time do áudio
@@ -94,6 +116,10 @@ export class VideoComponent implements OnInit {
   showVideo() {
     let c = this;
     this.ctx = this.canvasRef.nativeElement.getContext('2d');
+    this.ctx.rect(0, 0, 300, 150);
+    this.ctx.fillStyle = "#353535";
+    this.ctx.fill();
+
     let video = this.videoRef.nativeElement;
 
 
@@ -110,9 +136,9 @@ export class VideoComponent implements OnInit {
     let currentTime = this.audioRef.nativeElement.currentTime;
 
     // Caso haja legenda para exibir
-    if (this.video.txts instanceof Array) {
-      for (let i = 0; i < this.video.txts.length; i++) {
-        const legenda = this.video.txts[i];
+    if (this.actualVideo.txts instanceof Array) {
+      for (let i = 0; i < this.actualVideo.txts.length; i++) {
+        const legenda = this.actualVideo.txts[i];
 
         // Se estiver no tempo da legenda + 3s
         if (legenda.time <= currentTime && currentTime < legenda.time + 3) {
@@ -131,17 +157,34 @@ export class VideoComponent implements OnInit {
   }
 
   getFile(file: string) {
-    return this.service.url + "assets/" + file;
+    return this.data.assetsLocation + "/" + file;
   }
 
+  showPreviousNext() {
+    const hasPrevious = this.videoIndex > 0;
+    const hasNext = this.videoIndex < this.videos.length - 1;
+
+    this.showPrevious = hasPrevious;
+    this.showNext = hasNext;
+
+    if (hasPrevious) {
+      this.previousVideo = this.videos[this.videoIndex - 1];
+    }
+
+    if (hasNext) {
+      this.nextVideo = this.videos[this.videoIndex + 1];
+    }
+  }
+
+
   previous() {
-    if (this.data.index > 0) {
+    if (this.videoIndex > 0) {
       this.changeVideo(-1);
     }
   }
 
   next() {
-    if (this.data.index < this.videos.length - 1) {
+    if (this.videoIndex < this.videos.length - 1) {
       this.changeVideo(1);
     }
   }
@@ -150,14 +193,9 @@ export class VideoComponent implements OnInit {
     this.removeLegend();
     this.audioRef.nativeElement.pause();
 
-    this.data.index = this.data.index + n;
-    this.video = this.videos[this.data.index];
+    this.videoIndex = this.videoIndex + n;
+    this.actualVideo = this.videos[this.videoIndex];
     this.load();
     this.showPreviousNext();
-  }
-
-  showPreviousNext() {
-    this.showPrevious = (this.data.index > 0);
-    this.showNext = (this.data.index < this.videos.length - 1);
   }
 }

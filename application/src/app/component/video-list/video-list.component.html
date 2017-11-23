@@ -1,4 +1,4 @@
 <div class="row" *ngFor="let video of videos" (click)="showVideo(video)">
   <img class="thumb" [src]="getImage(video.im)" alt="video.name">
-  <span class="name">{{ video.name }}</span>
+  <span class="name">{{ video.name | uppercase }}</span>
 </div>
