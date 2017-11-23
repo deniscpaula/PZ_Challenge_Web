@@ -1,6 +1,6 @@
 .btn-back, .btn-next {
     box-sizing: border-box;
-    color: rgba(255,255,255,.6);
+    color: rgba(255,255,255,.7);
     cursor: pointer;
     margin: 20px;
     position: absolute;
@@ -41,19 +41,25 @@
     border-radius: 7px;
     box-shadow: rgba(0,0,0,.1) 1px 1px 35px 2px;
     margin: 50px auto 20px;
+    overflow: hidden;
     position: relative;
 }
 
 .video {
     border-radius: 7px;
+    display: none;
 }
 
 .legenda {
-    bottom: 20px;
+    bottom: 50px;
     color: white;
     font-size: 1.3rem;
     position: absolute;
     text-align: center;
     text-shadow: 2px 0 0 #000, -2px 0 0 #000, 0 2px 0 #000, 0 -2px 0 #000, 1px 1px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;;
+    width: 100%;
+}
+
+canvas {
     width: 100%;
 }

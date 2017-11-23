@@ -122,6 +122,13 @@ export class VideoListComponent implements OnInit {
   }
 
   showVideo(video: Video) {
+    sessionStorage.setItem(
+      "data", 
+      JSON.stringify({
+        "videos": this.videos,
+        "index": this.videos.indexOf(video)
+      })
+    );
     this.router.navigate(['/video']);
   }
 }

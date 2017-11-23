@@ -1,19 +1,24 @@
 <div class="display">
-  <video class="video" autoplay loop>
-    <source src="http://pbmedia.pepblast.com/pz_challenge/assets/440-BlueLines.mp4" type="video/mp4">
-    Your browser does not support the video tag.
+  <video #videoRef class="video" loop hidden="hidden">
+    <source [src]="getFile(video.bg)" type="video/mp4">
   </video>
 
-  <span class="legenda">Teste de legenda</span>
-  
-  <audio autoplay>
-    <source src="http://pbmedia.pepblast.com/pz_challenge/assets/01180-SP-Piano_One.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
+  <canvas #canvasRef></canvas>
+
+  <audio #audioRef controls>
+    <source [src]="getFile(video.sg)" type="audio/mpeg">
   </audio>
+
+  <span class="legenda" *ngIf="legenda">{{ legenda }}</span>
 </div>
 
-<span class="btn-back"><i class="fa fa-backward fa-2x"></i></span>
-<span class="btn-next"><i class="fa fa-forward fa-2x"></i></span>
+
+<span class="btn-back" (click)="previous()" *ngIf="showPrevious">
+  <i class="fa fa-backward fa-2x"></i>
+</span>
+<span class="btn-next" (click)="next()" *ngIf="showNext">
+  <i class="fa fa-forward fa-2x"></i>
+</span>
 
 <button class="btn-back-to-list" [routerLink]="['/']">
   <i class="fa fa-arrow-left"></i> Voltar para a lista
